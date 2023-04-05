@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil</title>
+</head>
+
+<body>
+    <div style="width: 50%; margin: auto;">
+        <%- include('./components/navigation.ejs') %>
+            <section>
+                <form action="/note" method="post">
+                    <input type="hidden" name="id" id="id">
+                    <div>
+                        <label for="titre">Titre</label>
+                        <input type="text" name="titre" placeholder="Titre" id="titre">
+                    </div>
+                    <div>
+                        <label for="description">Description</label> <br>
+                        <textarea name="description" id="description" cols="20" rows="5"></textarea>
+                    </div>
+                    <div>
+                        <input type="submit" value="Enregistrer">
+                    </div>
+                </form>
+                <p>
+                    -------------------------------------------------------------------
+                </p>
+            </section>
+            <section>
+                <h2>Liste des notes</h2>
+                <% notes.forEach(function(item){ %>
+                    <h3>
+                        <%=item.titre %>
+                    </h3>
+                    <p>
+                        <%=item.description %>
+                    </p>
+                    <input type="button" value="Supprimer" onclick="supprimer('<%=item._id %>')">
+                    <input type="button" value="Modifier"
+                        onclick="remplirDonnees('<%=item._id %>','<%=item.titre %>','<%=item.description %>')">
+                    <% }); %>
+            </section>
+    </div>
+    <script>
+        const remplirDonnees = (id, titre, description) => {
+            document.querySelector('#id').value = id;
+            document.querySelector('#titre').value = titre;
+            document.querySelector('#description').value = description;
+        }
+
+        function supprimer(id) {
+            fetch(`/notes/${id}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(async data => {
+                    // Rediriger vers la page d'accueil après la suppression
+                    window.location.href = data.routeRacine;
+                    location.reload();
+                })
+                .catch(error => console.error(error));
+        }
+
+
+
+
+
+    </script>
+</body>
+
+</html>
